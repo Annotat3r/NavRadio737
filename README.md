@@ -1,53 +1,98 @@
-> [!NOTE]  
-> This article is for developers who would like to create their own community device implementation. If you are interested in simply using community devices, check out [this page](https://github.com/MobiFlight/MobiFlight-Connector/wiki/Using-a-pre-build-custom-device)
+MobiFlight Custom Device for the Boeing 737NG Multi-Mode Radio (MMR)
 
-## Prerequisites
-* MobiFlight firmware development is done with [VSCode](https://code.visualstudio.com/) and the [PlatformIO](https://platformio.org) extension. 
-Make sure to install both.
-* **Create** a new reposority by using the [Community Template repository](https://github.com/MobiFlight/CommunityTemplate)*
-* Clone this reposority and open it in PlatformIO. Cloning could be directly done within PlatformIO,
+developed by Ryan Goff from the MF Community Device Template. It is
 
-Follow the next steps carefully!
-
-## Preparing the firmware
-* Open a terminal window within PlatformIO if it's not already opened
-
-![image](https://github.com/user-attachments/assets/871652b5-eab5-4709-af93-2338cd526e75)
-* type `python renaming.py` into the terminal window and answer the 2 questions
-
-![image](https://github.com/user-attachments/assets/bc9e553f-f55e-48cd-8374-fb27e9f1ba43)
-
-All required files and folders get renamed according your naming.
-
-### Testing
-Now it's a good point to test everything you have set up.
-
-The existing firmware itself will do nothing, but you can check if your new community board will show up under the Mobiflight Modules dialog if flashing the firmware to your new board. Additionally you can check if your community device could be choosed and gets uploaded to your board.
-A new Mega w/o firmware is connected:
-
-![image](https://github.com/MobiFlight/MobiFlight-Connector/assets/3263285/7167ecb9-c254-400c-88be-fc5ef5b103b3)
-
-In the list of firmwares there should be an entry which matches `'-DMOBIFLIGHT_TYPE="YourDevice_board"'` from `YourChangedName_platformio.ini`.
-Choose this entry and your firmware gets uploaded.
-After this step you should be able to add a community device.
-
-![image](https://github.com/MobiFlight/MobiFlight-Connector/assets/3263285/59f292f7-cbb1-4570-b0be-c5a933958e9e)
-
-For each `YourName.YourDevice.device.json` a list item with `"Type": "YourName_YourDevice"` should show up. Choose one of them and check if all pins will show up. If you have more than one community device defined test this with all of them.
-
-![image](https://github.com/MobiFlight/MobiFlight-Connector/assets/3263285/55d15e50-39ee-4474-a251-61da51754320)
+based on the Gables Engineering G7501-01 Boeing 737 Nav GLS Panel.
 
 
-## Implement your community firmware
-See all hints in the files. It is also a good idea to check how the examples are set up. The basic GNC255 community device supports an 256x128 OLED, so just one community class is supported. The community device for the FCU and EFIS display from KAV simulation supports five different classes, so it's a good example how to set up two ore more supported devices.
 
-## Further information
+This project was developed for use with X-Plane 12 and the Zibo 
 
-### Special message
-There are some special messages with their respective IDs defined:
-* Stop message (`-1`) - The device should turn off on receiving this message. The message is sent by the Connector any time the MobiFlight execution stops (Stop-button) or the application is shutdown.
-* PowerSavingMode message (`-2`) - The device should go into a power saving mode (value=1) or wake up from it again (value=0).
+mod Boeing 737. The custom device code is written for the way 
 
-### Overview how the json files are related
-![image](https://github.com/MobiFlight/MobiFlight-Connector/assets/3263285/0123829b-27c1-49ad-96d2-30a751da6e25)
+X-Plane 12 outputs data for displaying on the LCD screen. I don't 
+
+believe this code would work for MSFS without modifying.
+
+
+
+CAD FILES
+
+The CAD files include .stp (step) for all of the parts but it is important
+
+to understand that I designed the parts with specific manufacturing
+
+equipment in mind. The Acrylic and Plexiglass parts were cut using
+
+a desktop cnc machine, spray painted, and then the text laser-engraved
+
+using a blue-light diode laser.
+
+The buttons were 3D printed using white filament, spray painted black,
+
+and then laser engraved.
+
+Because of the laser-engraving being a step that occurs later, the
+
+CAD files for the faceplate and buttons do not include any text. The
+
+text was added in the laser engraving software.
+
+I have included 737NavRadio\_PCBA.step, which is a step file export of
+
+the custom printed circuit board assembly.
+
+
+
+PCBA
+
+The PCBA features an on-board Raspberry Pi Pico (RP2040), making this
+
+a fully self-contained device that requires no additional connections
+
+to external microcontroller devices.
+
+The backlighting is designed to operate off of an external 12V DC power
+
+supply and does not work if only connected to 5V USB. If you are building
+
+this panel and don't have, and don't want to acquire an external 12V
+
+power supply, you will need to make edits to the schematic and board
+
+files. Powering the backlighting from an external 12V source was done
+
+to reduce the overall current requirements of the PCBA vs. powering
+
+them from 5V. The backlighting is fully dimmable via connection to one
+
+GPIO PWM pin through an N-Channel MOSFET.
+
+Nearly all surface-mount devices on the PCB were ordered as part of the
+
+PCB Assembly via jlcpcb.com. Through-hole components such as the 12V
+
+power connection, the USB-Micro connector, 2-pin header for bootsel,
+
+and 4-pin header for connecting the OLED display are user-soldered. All
+
+push-buttons and LEDs on the PCB are user-soldered, though these are
+
+SMT components.
+
+The OLED display purchased must be a 2.42" 128x64 OLED LCD with I2C and
+
+SSD1309 driver. The specific device I used in my build was from AliExpress
+
+TZT 123 Official Store:
+
+https://www.aliexpress.us/item/3256802580414312.html
+
+
+
+Download the NavRadio737 custom device and move it to your MF Community
+
+folder directory. Use the RP2040 pin connections shown in the schematic
+
+to set up your mobiflight input/output devices.
 
